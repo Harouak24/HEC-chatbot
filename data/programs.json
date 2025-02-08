@@ -1,0 +1,682 @@
+[
+  {
+    "type": "masters",
+    "title": "Master Intelligence Artificielle & Management",
+    "slug": "master-intelligence-artificielle-management",
+    "description": {
+      "data": {},
+      "content": [
+        {
+          "data": {},
+          "content": [
+            {
+              "data": {},
+              "marks": [],
+              "value": "Découvrez notre Master Bac+5 en Intelligence Artificielle et Management, conçu pour les visionnaires aspirant à devenir leaders dans l’innovation technologique et la stratégie d’entreprise.",
+              "nodeType": "text"
+            }
+          ],
+          "nodeType": "paragraph"
+        },
+        {
+          "data": {},
+          "content": [
+            {
+              "data": {},
+              "marks": [],
+              "value": "",
+              "nodeType": "text"
+            }
+          ],
+          "nodeType": "paragraph"
+        }
+      ],
+      "nodeType": "document"
+    },
+    "studyFee": null,
+    "applicationFee": null,
+    "registrationFee": null,
+    "duration": null,
+    "modules": []
+  },
+  {
+    "type": "masters",
+    "title": "Master Logistique et Commerce International",
+    "slug": "master-logistique-et-commerce-international",
+    "description": {
+      "data": {},
+      "content": [
+        {
+          "data": {},
+          "content": [
+            {
+              "data": {},
+              "marks": [],
+              "value": "La formation prépare les étudiants aux métiers désormais fortement internationalisés de la fonction Achats et Supply Chain apte à prendre à très court terme des responsabilités managériales opérationnelles",
+              "nodeType": "text"
+            }
+          ],
+          "nodeType": "paragraph"
+        },
+        {
+          "data": {},
+          "content": [
+            {
+              "data": {},
+              "marks": [],
+              "value": "",
+              "nodeType": "text"
+            }
+          ],
+          "nodeType": "paragraph"
+        }
+      ],
+      "nodeType": "document"
+    },
+    "studyFee": null,
+    "applicationFee": null,
+    "registrationFee": null,
+    "duration": null,
+    "modules": []
+  },
+  {
+    "type": "masters",
+    "title": "Master Comptabilité, Contrôle et Audit",
+    "slug": "master-comptabilite-controle-et-audit",
+    "description": {
+      "data": {},
+      "content": [
+        {
+          "data": {},
+          "content": [
+            {
+              "data": {},
+              "marks": [],
+              "value": "Le programme CCA vise à former de futurs experts-comptables, des auditeurs financiers, des consultants ou des cadres d’entreprise",
+              "nodeType": "text"
+            }
+          ],
+          "nodeType": "paragraph"
+        },
+        {
+          "data": {},
+          "content": [
+            {
+              "data": {},
+              "marks": [],
+              "value": "",
+              "nodeType": "text"
+            }
+          ],
+          "nodeType": "paragraph"
+        }
+      ],
+      "nodeType": "document"
+    },
+    "studyFee": null,
+    "applicationFee": null,
+    "registrationFee": null,
+    "duration": null,
+    "modules": []
+  },
+  {
+    "type": "masters",
+    "title": "Master Marketing, E-business & Digital Strategy",
+    "slug": "master-marketing-e-business-digital-strategy",
+    "description": {
+      "data": {},
+      "content": [
+        {
+          "data": {},
+          "content": [
+            {
+              "data": {},
+              "marks": [],
+              "value": "Le Marketing, E-business & Digital Strategy forme aux métiers du marketing et plus spécifiquement a pour objectifs de former les futurs cadres marketing en entreprise",
+              "nodeType": "text"
+            }
+          ],
+          "nodeType": "paragraph"
+        },
+        {
+          "data": {},
+          "content": [
+            {
+              "data": {},
+              "marks": [],
+              "value": "",
+              "nodeType": "text"
+            }
+          ],
+          "nodeType": "paragraph"
+        }
+      ],
+      "nodeType": "document"
+    },
+    "studyFee": null,
+    "applicationFee": null,
+    "registrationFee": null,
+    "duration": null,
+    "modules": []
+  },
+  {
+    "type": "masters",
+    "title": "Master Finance",
+    "slug": "master-finance",
+    "description": {
+      "data": {},
+      "content": [
+        {
+          "data": {},
+          "content": [
+            {
+              "data": {},
+              "marks": [],
+              "value": "Découvrez notre Master Bac+5 en Finance, une formation d’excellence conçue pour les futurs leaders du secteur financier. Développez une expertise approfondie en finance d’entreprise, marchés financiers, et gestion des risques, grâce à un curriculum innovant et une immersion professionnelle garantissant une carrière réussie",
+              "nodeType": "text"
+            }
+          ],
+          "nodeType": "paragraph"
+        },
+        {
+          "data": {},
+          "content": [
+            {
+              "data": {},
+              "marks": [],
+              "value": "",
+              "nodeType": "text"
+            }
+          ],
+          "nodeType": "paragraph"
+        }
+      ],
+      "nodeType": "document"
+    },
+    "studyFee": null,
+    "applicationFee": null,
+    "registrationFee": null,
+    "duration": null,
+    "modules": []
+  },
+  {
+    "type": "executive_master",
+    "title": "Executive Master Gestion de Projets",
+    "slug": "executive-master-gestion-de-projets",
+    "description": "Pour un pilotage de projet dynamique, agile et adaptatif.",
+    "studyFee": 38000,
+    "applicationFee": 300,
+    "registrationFee": 3500,
+    "duration": null,
+    "modules": [
+      "Executive Certificate Management de Projets",
+      "Executive Certificate Gestion Opérationnelle et Pilotage de Projet",
+      "Executive Certificate Gestion de Projets : Nouvelles Tendances"
+    ]
+  },
+  {
+    "type": "executive_master",
+    "title": "Executive Master Finance",
+    "slug": "executive-master-finance",
+    "description": "Maîtrisez les leviers financiers stratégiques pour prendre des décisions éclairées et optimiser la performance de votre organisation",
+    "studyFee": 38000,
+    "applicationFee": 300,
+    "registrationFee": 3500,
+    "duration": null,
+    "modules": [
+      "Executive Certificate Diagnostic et Gestion Financière",
+      "Executive Certificate Finance de Marché",
+      "Executive Certificate Conseil et Régulation des Services Financiers"
+    ]
+  },
+  {
+    "type": "executive_master",
+    "title": "Executive Master Data Gouvernance, Cloud Computing & Cybersécurité",
+    "slug": "executive-master-data-gouvernance-cloud-computing-cybersecurite",
+    "description": "Prenez le contrôle de vos données et assurez leur sécurité dans un monde numérique en constante évolution.",
+    "studyFee": 38000,
+    "applicationFee": 300,
+    "registrationFee": 3500,
+    "duration": null,
+    "modules": [
+      "Executive Certificate Data Gouvernance et Stratégie IT",
+      "Executive Certificate Cloud Computing & Infrastructure IT",
+      "Executive Certificate Cybersécurité"
+    ]
+  },
+  {
+    "type": "executive_master",
+    "title": "Executive Master Data Analytics & Machine Learning",
+    "slug": "executive-master-data-analytics-machine-learning",
+    "description": "Maîtrisez l’art de l’analyse prédictive",
+    "studyFee": 38000,
+    "applicationFee": 300,
+    "registrationFee": 3500,
+    "duration": null,
+    "modules": [
+      "Executive Certificate Analyse des données et Ingénierie de la Décision",
+      "Executive Certificate Data Mining & Business Intelligence",
+      "Executive Certificate Machine Learning"
+    ]
+  },
+  {
+    "type": "executive_master",
+    "title": "Executive Master Intelligence Artificielle & Big Data",
+    "slug": "executive-master-intelligence-artificielle-big-data",
+    "description": "Transformez les données en opportunités",
+    "studyFee": 38000,
+    "applicationFee": 300,
+    "registrationFee": 3500,
+    "duration": null,
+    "modules": [
+      "Executive Certificate Modélisation en Intelligence Artificielle",
+      "Executive Certificate Big Data & Cloud Computing",
+      "Executive Certificate IA & Big Data Engineering"
+    ]
+  },
+  {
+    "type": "executive_master",
+    "title": "Executive Master Qualité Hygiène – Sécurité Environnement (QHSE)",
+    "slug": "executive-master-qualite-hygiene-securite-environnement-qhse",
+    "description": "Devenez Expert QHSE",
+    "studyFee": 38000,
+    "applicationFee": 300,
+    "registrationFee": 3500,
+    "duration": null,
+    "modules": [
+      "Executive Certificate Management de la Qualité ISO 9001 Version 2015",
+      "Executive Certificate Santé, Hygiène & Sécurité du Travail ISO 45001 Version 2018",
+      "Executive Certificate Management Environnemental ISO 14001 Version 2015"
+    ]
+  },
+  {
+    "type": "executive_master",
+    "title": "Executive Master Management et Ressources Humaines",
+    "slug": "executive-master-management-et-ressources-humaines",
+    "description": "Maitriser les nouveaux enjeux de la fonction RH",
+    "studyFee": 38000,
+    "applicationFee": 300,
+    "registrationFee": 3500,
+    "duration": null,
+    "modules": [
+      "Executive Certificate Management Stratégique des RH",
+      "Executive Certificate Gestion des Ressources Humaines",
+      "Executive Certificate Leadership et Ressources Humaines"
+    ]
+  },
+  {
+    "type": "executive_master",
+    "title": "Executive Master Achats, Logistique et Supply Chain Management",
+    "slug": "executive-master-achats-logistique-et-supply-chain-management",
+    "description": "Maîtrisez l’art de l’approvisionnement stratégique et optimisez vos chaînes logistiques.",
+    "studyFee": 38000,
+    "applicationFee": 300,
+    "registrationFee": 3500,
+    "duration": null,
+    "modules": [
+      "Executive Certificate Logistique",
+      "Executive Certificate Supply Chain Management",
+      "Executive Certificate Management des Achats"
+    ]
+  },
+  {
+    "type": "executive_master",
+    "title": "Executive Master Audit et Contrôle de Gestion",
+    "slug": "executive-master-audit-et-controle-de-gestion",
+    "description": "Devenez un expert en gouvernance financière",
+    "studyFee": 38000,
+    "applicationFee": 300,
+    "registrationFee": 3500,
+    "duration": null,
+    "modules": [
+      "Executive Certificate Contrôle de Gestion",
+      "Executive Certificate Audit Comptable et Financier",
+      "Executive Certificate Contrôle et Audit Internes"
+    ]
+  },
+  {
+    "type": "executive_master",
+    "title": "Executive Master Marketing Digital & e-Business",
+    "slug": "executive-master-marketing-digital-e-business",
+    "description": "Devenez un acteur clé de la révolution numérique et maîtrisez les stratégies digitales les plus innovantes",
+    "studyFee": 38000,
+    "applicationFee": 300,
+    "registrationFee": 3500,
+    "duration": null,
+    "modules": [
+      "Executive Certificate Marketing Stratégique",
+      "Executive Certificate Marketing Digital et Performance Commerciale",
+      "Executive Certificate Gestion Digitale de la Marque"
+    ]
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Contrôle de Gestion",
+    "slug": "executive-certificate-controle-de-gestion",
+    "description": "Devenez un expert en contrôle de gestion et optimisez la performance financière de votre entreprise",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Audit Comptable et Financier",
+    "slug": "executive-certificate-audit-comptable-et-financier",
+    "description": "Une formation de base pratique et complète en matière d’audit qui vous permet d’acquérir les compétences d’experts de terrain.",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Contrôle et Audit Internes",
+    "slug": "executive-certificate-controle-et-audit-internes",
+    "description": "Devenez un expert en contrôle et audit internes pour renforcer la gouvernance, la gestion des risques et l’efficacité opérationnelle de votre organisation.",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Gestion Digitale de la Marque",
+    "slug": "executive-certificate-gestion-digitale-de-la-marque",
+    "description": "Propulsez votre marque à l’ère du digital",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Gestion des Ressources Humaines",
+    "slug": "executive-certificate-gestion-des-ressources-humaines",
+    "description": "Renforcez vos compétences en gestion des ressources humaines pour attirer, développer et retenir les talents, tout en optimisant la performance de votre organisation",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Machine Learning",
+    "slug": "executive-certificate-machine-learning",
+    "description": "Maîtrisez les algorithmes de machine learning les plus avancés et transformez vos données en solutions intelligentes pour répondre aux défis complexes de votre entreprise",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate IA & Big Data Engineering",
+    "slug": "executive-certificate-ia-big-data-engineering",
+    "description": "Propulsez votre carrière en maîtrisant les technologies de pointe qui transforment les données en opportunités stratégiques",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Marketing Digital et Performance Commerciale",
+    "slug": "executive-certificate-marketing-digital-et-performance-commerciale",
+    "description": "Maîtrisez les outils et techniques du marketing digital pour booster la performance commerciale et propulser votre entreprise vers de nouveaux sommets.",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Logistique",
+    "slug": "executive-certificate-logistique",
+    "description": "Optimisez vos compétences en logistique pour améliorer l’efficacité opérationnelle et la performance de votre chaîne d’approvisionnement.",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Marketing Stratégique",
+    "slug": "executive-certificate-marketing-strategique",
+    "description": "Pour répondre aux challenges actuels du marketing et appréhender tous les outils, pour construire une stratégie marketing efficace à l’ère du digital.",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Data Mining & Business Intelligence",
+    "slug": "executive-certificate-data-mining-business-intelligence",
+    "description": "Transformez des données brutes en informations stratégiques pour propulser votre entreprise vers de nouveaux sommets.",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Analyse des données et Ingénierie de la Décision",
+    "slug": "executive-certificate-analyse-des-donnees-et-ingenierie-de-la-decision",
+    "description": "Développez votre expertise en analyse de données et en ingénierie de la décision pour transformer des données complexes en insights stratégiques et décisions éclairées.",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Diagnostic et Gestion Financière",
+    "slug": "executive-certificate-diagnostic-et-gestion-financiere",
+    "description": "Prenez des décisions financières éclairées et optimisez la santé de votre entreprise",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Modélisation en Intelligence Artificielle",
+    "slug": "executive-certificate-modelisation-en-intelligence-artificielle",
+    "description": "Révolutionnez votre entreprise avec des modèles d’intelligence artificielle avancés",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Management de Projet",
+    "slug": "executive-certificate-management-de-projet",
+    "description": "Devenez un expert en management de projets en maîtrisant les fondamentaux, en animant efficacement vos équipes, et en conduisant le changement avec succès.",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Services Financiers et Conseil ",
+    "slug": "executive-certificate-services-financiers-conseil",
+    "description": "Devenez expert en services financiers et guidez vos clients vers le succès.",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Gestion Opérationnelle et Pilotage de Projet",
+    "slug": "executive-certificate-gestion-operationnelle-et-pilotage-de-projet",
+    "description": "Ce programme captivant offre aux participants l’opportunité unique d’acquérir des compétences de pointe en gestion opérationnelle et pilotage de projets.",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Opérations de Financement et Finance de Marché",
+    "slug": "executive-certificate-operations-financement-finance-de-marche",
+    "description": "Maîtrisez les stratégies d’investissement et naviguez avec succès sur les marchés financiers.",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Architecture Big Data",
+    "slug": "executive-certificate-architecture-big-data",
+    "description": "Transformez vos données en valeur et optimisez vos ressources grâce au Big Data et au Cloud Computing",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Leadership et Ressources Humaines",
+    "slug": "executive-certificate-leadership-et-ressources-humaines",
+    "description": "Développez vos compétences en leadership et en gestion des ressources humaines pour inspirer vos équipes et transformer votre organisation",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Supply Chain Management",
+    "slug": "executive-certificate-supply-chain-management",
+    "description": "Maîtrisez les stratégies avancées de gestion de la chaîne d’approvisionnement pour améliorer l’efficacité, réduire les coûts et créer une valeur durable pour votre entreprise.",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Management des Achats",
+    "slug": "executive-certificate-management-des-achats",
+    "description": "Optimisez vos compétences en gestion des achats pour réduire les coûts, renforcer les relations fournisseurs et maximiser la valeur ajoutée pour votre entreprise.",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Santé, Hygiène & Sécurité du Travail ISO 45001 Version 2018",
+    "slug": "executive-certificate-sante-hygiene-securite-du-travail-iso-45001-version-2018",
+    "description": "Assurez un environnement de travail sûr et conforme aux meilleures pratiques internationales",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Management Environnemental ISO 14001 Version 2015",
+    "slug": "executive-certificate-management-environnemental-iso-14001-version-2015",
+    "description": "Adoptez une approche durable et maîtrisez les normes environnementales internationales.",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Management de la Qualité ISO 9001 Version 2015",
+    "slug": "executive-certificate-management-de-la-qualite-iso-9001-version-2015",
+    "description": "Atteignez l’excellence opérationnelle et maîtrisez les normes de qualité internationales",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Cybersécurité",
+    "slug": "executive-certificate-cybersecurite",
+    "description": "Renforcez votre expertise et protégez vos systèmes contre les menaces numériques les plus avancées avec des compétences en cybersécurité de point",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Cloud Computing & Infrastructure IT",
+    "slug": "executive-certificate-cloud-computing-infrastructure-it",
+    "description": "Maîtrisez les technologies de pointe en Cloud Computing et Infrastructure IT pour transformer et optimiser l’architecture technologique de votre organisation.",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Data Gouvernance et Stratégie IT",
+    "slug": "executive-certificate-data-gouvernance-et-strategie-it",
+    "description": "Devenez un leader stratégique en maîtrisant la gouvernance des données et en élaborant des stratégies IT innovantes pour propulser votre organisation vers l’excellence",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Management Stratégique des RH",
+    "slug": "executive-certificate-management-strategique-rh",
+    "description": "Développez vos compétences en management stratégique et ressources humaines pour transformer votre organisation et maximiser le potentiel de vos équipes.",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  },
+  {
+    "type": "executive_certificate",
+    "title": "Executive Certificate Gestion de Projets : Nouvelles Tendances",
+    "slug": "executive-certificate-gestion-de-projets-nouvelles-tendances",
+    "description": "Ce programme captivant offre aux participants l’opportunité unique d’acquérir des compétences de pointe en gestion opérationnelle et pilotage de projets.",
+    "studyFee": 12600,
+    "applicationFee": 0,
+    "registrationFee": 0,
+    "duration": "3 mois",
+    "modules": []
+  }
+]
