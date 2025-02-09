@@ -1,19 +1,26 @@
-from services.contentful_client import (
-    get_masters_programs, 
-    get_executive_masters, 
-    get_executive_certificates
-)
+import streamlit as st
+from ..app.orchestrator import chatbot_orchestrator
 
-def test_contentful_api():
-    masters = get_masters_programs()
-    print("Masters:", masters)
-
-    exec_masters = get_executive_masters()
-    print("Executive Masters:", exec_masters)
-
-    # No filter => fetch all
-    exec_certs = get_executive_certificates()
-    print("Executive Certificates:", exec_certs)
+def main():
+    # Configure the page
+    st.set_page_config(page_title="HEC Chatbot", layout="wide")
+    
+    # Title and instructions
+    st.title("HEC Chatbot")
+    st.markdown("Ask me anything about our programs, and I'll help you find the right fit!")
+    
+    # Input box for the user's query
+    user_query = st.text_input("Enter your query here:")
+    
+    # When the user clicks "Submit"
+    if st.button("Submit"):
+        if not user_query.strip():
+            st.error("Please enter a valid query.")
+        else:
+            with st.spinner("Generating response..."):
+                response = chatbot_orchestrator(user_query)
+            st.markdown("### Chatbot Response:")
+            st.write(response)
 
 if __name__ == "__main__":
-    test_contentful_api()
+    main()

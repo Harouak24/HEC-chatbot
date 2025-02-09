@@ -54,7 +54,7 @@ def determine_category(background: str) -> Tuple[str, str]:
     bg_lower = background.lower().strip()
     if bg_lower == "":
         return "masters", ""
-    if any(keyword in bg_lower for keyword in ["executive", "senior", "manager"]):
+    if any(keyword in bg_lower for keyword in ["executive", "senior", "manager", "chef"]):
         return "executive_master", ""
     if "bachelor" in bg_lower:
         return "masters", ""
@@ -110,17 +110,6 @@ def recommend_programs(background: str,
                          embeddings_file: str = "data/program_embeddings.pkl") -> str:
     """
     Recommends programs based on the user's background.
-    
-    Steps:
-      1. Determine the recommendation category (masters vs. executive_master) based on background.
-         - If the user is an executive (keywords present), use "executive_master".
-         - If background is empty or mentions "bachelor", use "masters".
-         - Otherwise, if it appears the user does not hold a bachelor's, return an advisory message.
-      2. Load program data and precomputed embeddings.
-      3. Filter programs by the determined category.
-      4. If background is provided, generate an embedding for the background and rank the candidate programs.
-         Otherwise, list all programs in that category.
-      5. Use a creative LLM prompt (with high temperature) to produce a recommendation message.
     
     Returns:
       A creative recommendation message string.
