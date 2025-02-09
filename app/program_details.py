@@ -118,7 +118,7 @@ def handle_program_details(query: str,
                 best_score = score
                 best_slug = slug
     
-    MIN_SIMILARITY_THRESHOLD = 0.5
+    MIN_SIMILARITY_THRESHOLD = 0.3
     if best_score < MIN_SIMILARITY_THRESHOLD or best_slug is None:
         return "No sufficiently close match was found for your query."
     
