@@ -2,17 +2,42 @@ import os
 import json
 import pickle
 import numpy as np
-from langchain import hub
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.agents import create_structured_chat_agent, AgentExecutor, Tool
-from langchain.chat_models import ChatOpenAI
-from langchain.memory import ConversationBufferMemory
-from langchain.schema import SystemMessage, HumanMessage, AIMessage
+from langchain_mongodb.chat_message_histories import MongoDBChatMessageHistory
+from langchain.agents import AgentExecutor, create_tool_calling_agent
+from langchain_core.tools import tool
+from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from dotenv import load_dotenv
 
 load_dotenv()
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+llm = ChatOpenAI(model="gpt-4o", temperature=0.5)
+
+def get_session_history(session_id):
+    return MongoDBChatMessageHistory(
+        session_id=session_id,
+        database_name="Bots",
+        collection_name="HEC",
+    )
+
+prompt_template = """
+    You are an academic advisor at HEC University. HEC University is a graduate school that offer masters programs as well as executive masters programs. You have access to a list of all programs available at the university. You can provide detailed information about a specific program, recommend programs based on a user's background and interest, and more.
+"""
+
+prompt = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            prompt_template,
+        ),
+        MessagesPlaceholder(variable_name="history"),
+        MessagesPlaceholder(variable_name="agent_scratchpad"),
+        ("human", "{input}"),
+    ]
+)
 
 def cosine_similarity(vec1: list, vec2: list) -> float:
     a = np.array(vec1)
@@ -45,6 +70,7 @@ def generate_embedding(text: str) -> list:
         print(f"Error generating embedding: {e}")
         return []
 
+@tool
 def get_all_masters_tool() -> str:
     """
     Returns a grouped list of all university masters programs.
@@ -57,12 +83,13 @@ def get_all_masters_tool() -> str:
         title = prog.get("title")
         if prog_type == "masters":
             masters.append(title)
-    output += f"HEC Masters:\n"
+    output = f"HEC Masters:\n"
     for i, m in enumerate(masters, start=1):
         output += f"  {i}. {m}\n"
     output += "\n"
     return output.strip()
 
+@tool
 def get_all_executive_masters_tool() -> str:
     """
     Returns a grouped list of all university executive masters programs.
@@ -76,7 +103,7 @@ def get_all_executive_masters_tool() -> str:
         modules = prog.get("modules")
         if prog_type == "executive_master":
             grouped.append([title, modules])
-    output += f"HEC Executive Masters:\n"
+    output = f"HEC Executive Masters:\n"
     i = 1
     while i <= len(grouped):
         title, modules = grouped[i-1]
@@ -88,6 +115,7 @@ def get_all_executive_masters_tool() -> str:
         i += 1
     return output.strip()
 
+@tool
 def get_program_details_tool(query: str) -> str:
     """
     Uses embedding matching to find the best program for a given query,
@@ -154,6 +182,7 @@ def get_program_details_tool(query: str) -> str:
     
     return details.strip()
 
+@tool
 def recommend_programs_tool(background: str = "", interest: str = "") -> str:
     """
     Provides program recommendations based on the user's background and interest.
@@ -231,68 +260,15 @@ def recommend_programs_tool(background: str = "", interest: str = "") -> str:
     }
     return json.dumps(result)
 
-# Set up the tools for the agent.
-tools = [
-    Tool(
-        name="GetAllMasters",
-        func=get_all_masters_tool,
-        description="Useful when users want to see a list of all university masters programs."
-    ),
-    Tool(
-        name="GetAllExecutiveMasters",
-        func=get_all_executive_masters_tool,
-        description="Useful when users want to see a list of all university executive masters programs."
-    ),
-    Tool(
-        name="GetProgramDetails",
-        func=get_program_details_tool,
-        description="Useful when users want detailed information about a specific program."
-    ),
-    Tool(
-        name="RecommendPrograms",
-        func=recommend_programs_tool,
-        description="Useful for general recommendations based on user background and interest."
-    )
-]
+tools = [get_all_executive_masters_tool, get_all_masters_tool, get_program_details_tool, recommend_programs_tool]
 
-prompt = hub.pull("hwchase17/structured-chat-agent")
+agent = create_tool_calling_agent(llm, tools, prompt)
 
-llm = ChatOpenAI(model="gpt-4o", temperature=0.5)
+agent_executor = AgentExecutor(agent=agent, tools=tools)
 
-memory = ConversationBufferMemory(memory_key = "chat_history", return_messages = True)
-
-agent = create_structured_chat_agent(llm = llm, tools = tools, prompt = prompt)
-
-agent_executor = AgentExecutor.from_agent_and_tools(
-    agent = agent,
-    tools = tools,
-    verbose = True,
-    memory = memory,
-    handle_parsing_errors = True
+agent_executor_history = RunnableWithMessageHistory(
+    agent_executor,
+    get_session_history,
+    input_messages_key="input",
+    history_messages_key="history",
 )
-
-context = "You are an academic advisor at HEC University. You have access to a list of all programs available at the university. You can provide detailed information about a specific program, recommend programs based on a user's background, and more."
-
-memory.chat_memory.add_messages(SystemMessage(content=context))
-
-
-print("=== Get All Programs ===")
-user_input = "List all programs available at the university."
-memory.chat_memory.add_messages(HumanMessage(content=user_input))
-response = agent_executor.invoke({"input": user_input})
-memory.chat_memory.add_messages(AIMessage(content=response["output"]))
-print("Bot: ", response["output"])
-
-print("\n=== Get Program Details ===")
-user_input = "I want details regarding the Artfcial Intlgc program"
-memory.chat_memory.add_messages(HumanMessage(content=user_input))
-response = agent_executor.invoke({"input": user_input})
-memory.chat_memory.add_messages(AIMessage(content=response["output"]))
-print("Bot: ", response["output"])
-
-print("\n=== Recommend Programs ===")
-user_input = "I have a Bachelor's in Business and want to advance in finance."
-memory.chat_memory.add_messages(HumanMessage(content=user_input))
-response = agent_executor.invoke({"input": user_input})
-memory.chat_memory.add_messages(AIMessage(content=response["output"]))
-print("Bot: ", response["output"])
