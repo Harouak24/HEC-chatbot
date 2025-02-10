@@ -2,15 +2,17 @@ import os
 import json
 import pickle
 import numpy as np
-from openai import openai
-from langchain.agents import initialize_agent, Tool
+from langchain import hub
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.agents import create_structured_chat_agent, AgentExecutor, Tool
 from langchain.chat_models import ChatOpenAI
+from langchain.memory import ConversationBufferMemory
+from langchain.schema import SystemMessage, HumanMessage, AIMessage
 from dotenv import load_dotenv
 
 load_dotenv()
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 def cosine_similarity(vec1: list, vec2: list) -> float:
     a = np.array(vec1)
@@ -33,19 +35,17 @@ def generate_embedding(text: str) -> list:
               Returns an empty list if there's an error.
     """
     try:
-        response = openai.embeddings.create(
-            model="text-embedding-3-small",  # or "text-embedding-ada-002", etc.
+        response = OpenAIEmbeddings(
+            model="text-embedding-3-small",
             input=text,
             encoding_format="float"
         )
-        # 'response' is a typed object
-        embedding = response.data[0].embedding
-        return embedding
+        return response.embed_query(text)
     except Exception as e:
         print(f"Error generating embedding: {e}")
         return []
 
-def get_all_masters_tool(query: str) -> str:
+def get_all_masters_tool() -> str:
     """
     Returns a grouped list of all university masters programs.
     """
@@ -63,7 +63,7 @@ def get_all_masters_tool(query: str) -> str:
     output += "\n"
     return output.strip()
 
-def get_all_executive_masters_tool(query: str) -> str:
+def get_all_executive_masters_tool() -> str:
     """
     Returns a grouped list of all university executive masters programs.
     """
@@ -91,8 +91,7 @@ def get_all_executive_masters_tool(query: str) -> str:
 def get_program_details_tool(query: str) -> str:
     """
     Uses embedding matching to find the best program for a given query,
-    then returns its detailed information. This method is robust to typos
-    or incomplete program names.
+    then returns its detailed information.
     """
     data_file = "data/programs.json"
     embeddings_file = "data/program_embeddings.pkl"
@@ -155,38 +154,39 @@ def get_program_details_tool(query: str) -> str:
     
     return details.strip()
 
-def recommend_tool(query: str) -> str:
+def recommend_programs_tool(background: str = "", interest: str = "") -> str:
     """
-    Provides program recommendations based on the user's background using embeddings
-    for a more robust analysis of the background text.
+    Provides program recommendations based on the user's background and interest.
     
-    The tool will:
-      - Generate an embedding for the user's background.
-      - Compute similarity scores for each program in both the "masters" and "executive_master" categories.
-      - Recommend programs from the category that best aligns with the background.
-      - If the similarity scores are low across the board, advise the user accordingly.
+    This tool returns structured data (as a JSON string) that includes:
+      - "category": either "masters" or "executive_master"
+      - "recommended_programs": a list of recommended program titles (up to three)
     """
-    background = query.strip()
-    if not background:
-        # If background is empty, default to recommending all masters.
+    combined_query = (background + " " + interest).strip()
+    data_file = "data/programs.json"
+    embeddings_file = "data/program_embeddings.pkl"
+    
+    if not os.path.exists(data_file) or not os.path.exists(embeddings_file):
+        return json.dumps({"error": "Program data or embeddings not found."})
+    
+    with open(data_file, "r", encoding="utf-8") as f:
+        programs = json.load(f)
+    with open(embeddings_file, "rb") as f:
+        embeddings = pickle.load(f)
+    
+    # Default to master's if no input is provided.
+    if not combined_query:
         category = "masters"
+        bg_embedding = None
     else:
-        # Generate embedding for the background.
-        bg_embedding = generate_embedding(background)
+        bg_embedding = generate_embedding(combined_query)
         if not bg_embedding:
-            return "Error generating embedding for your background."
-
-        # Load programs and embeddings.
-        with open("data/programs.json", "r", encoding="utf-8") as f:
-            programs = json.load(f)
-        with open("data/program_embeddings.pkl", "rb") as f:
-            embeddings = pickle.load(f)
+            return json.dumps({"error": "Error generating embedding for your input."})
         
-        # Separate programs by category.
+        # Separate programs into categories.
         masters = [p for p in programs if p.get("type") == "masters"]
         exec_masters = [p for p in programs if p.get("type") == "executive_master"]
         
-        # Compute aggregate similarity scores for each category.
         def avg_similarity(progs):
             scores = []
             for prog in progs:
@@ -195,94 +195,104 @@ def recommend_tool(query: str) -> str:
                 if prog_emb:
                     scores.append(cosine_similarity(bg_embedding, prog_emb))
             return sum(scores) / len(scores) if scores else 0
-
+        
         masters_score = avg_similarity(masters)
         exec_score = avg_similarity(exec_masters)
         
-        # Decide category based on which has a higher average similarity.
-        if masters_score >= exec_score:
-            category = "masters"
-        else:
-            category = "executive_master"
-
+        # If both similarity scores are low, advise the user accordingly.
         if masters_score < 0.3 and exec_score < 0.3:
-            return ("Our university primarily offers graduate programs, and it seems your background "
-                    "does not strongly align with these. You might want to consider obtaining a bachelor's degree first.")
+            return json.dumps({
+                "error": ("Your background and interests do not strongly align with our graduate programs. "
+                          "Please consider obtaining a bachelor's degree first.")
+            })
+        
+        # Select the category with the higher average similarity.
+        category = "masters" if masters_score >= exec_score else "executive_master"
     
-    # Filter programs based on the selected category.
+    # Filter programs by the selected category.
     filtered = [p for p in programs if p.get("type") == category]
     if not filtered:
-        return f"Sorry, no programs found in the '{category}' category."
+        return json.dumps({"error": f"Sorry, no programs found in the '{category}' category."})
     
-    # Optionally, rank the filtered programs by embedding similarity.
-    ranked = sorted(filtered, key=lambda p: cosine_similarity(
-        bg_embedding, embeddings.get(p.get("slug"), [])), reverse=True) if background else filtered
-    recommended_titles = [p.get("title") for p in ranked][:3]
-    rec_list = "\n".join(f"{i+1}. {title}" for i, title in enumerate(recommended_titles))
-    
-    prompt = (
-        f"You are a creative academic advisor. The user provided the following background: \"{background}\".\n"
-        f"Based on this, recommend the following programs in the '{category}' category:\n"
-        f"{rec_list}\n\n"
-        "Please provide a creative recommendation message explaining why these programs might be an excellent fit for the user."
-    )
-    
-    try:
-        response = openai.Completion.create(
-            model="gpt-4o",
-            prompt=prompt,
-            max_tokens=300,
-            temperature=0.9
+    # If an embedding was generated, rank the filtered programs by cosine similarity.
+    if bg_embedding:
+        ranked = sorted(
+            filtered,
+            key=lambda p: cosine_similarity(bg_embedding, embeddings.get(p.get("slug"), [])),
+            reverse=True
         )
-        return response.choices[0].text.strip()
-    except Exception as e:
-        print(f"Error generating completion: {e}")
-        return "An error occurred while generating the response."
+    else:
+        ranked = filtered
+    recommended_titles = [p.get("title") for p in ranked][:3]
+    
+    result = {
+        "category": category,
+        "recommended_programs": recommended_titles
+    }
+    return json.dumps(result)
 
 # Set up the tools for the agent.
 tools = [
     Tool(
         name="GetAllMasters",
         func=get_all_masters_tool,
-        description="Returns a grouped list of all university masters programs."
+        description="Useful when users want to see a list of all university masters programs."
     ),
     Tool(
         name="GetAllExecutiveMasters",
         func=get_all_executive_masters_tool,
-        description="Returns a grouped list of all university executive masters programs."
+        description="Useful when users want to see a list of all university executive masters programs."
     ),
     Tool(
         name="GetProgramDetails",
         func=get_program_details_tool,
-        description="Given a specific program, returns detailed information about the best matching program using embedding-based matching."
+        description="Useful when users want detailed information about a specific program."
     ),
     Tool(
         name="RecommendPrograms",
-        func=recommend_tool,
-        description="Provides creative program recommendations based on the user's background."
+        func=recommend_programs_tool,
+        description="Useful for general recommendations based on user background and interest."
     )
 ]
 
-llm = ChatOpenAI(model_name="gpt-4o", temperature=0.7)
+prompt = hub.pull("hwchase17/structured-chat-agent")
 
-agent = initialize_agent(
-    tools,
-    llm,
-    agent="zero-shot-react-description",
-    verbose=True
+llm = ChatOpenAI(model="gpt-4o", temperature=0.5)
+
+memory = ConversationBufferMemory(memory_key = "chat_history", return_messages = True)
+
+agent = create_structured_chat_agent(llm = llm, tools = tools, prompt = prompt)
+
+agent_executor = AgentExecutor.from_agent_and_tools(
+    agent = agent,
+    tools = tools,
+    verbose = True,
+    memory = memory,
+    handle_parsing_errors = True
 )
 
-if __name__ == "__main__":
-    # Example interactions:
-    print("=== Get All Programs ===")
-    result_all = agent.run("List all programs available at the university.")
-    print(result_all)
-    
-    print("\n=== Get Program Details ===")
-    # Even with typos, the embedding matching should find the correct program.
-    result_details = agent.run("I want details regarding the Artfcial Intlgc program")
-    print(result_details)
-    
-    print("\n=== Recommend Programs ===")
-    result_recommend = agent.run("I have a Bachelor's in Business and want to advance in finance.")
-    print(result_recommend)
+context = "You are an academic advisor at HEC University. You have access to a list of all programs available at the university. You can provide detailed information about a specific program, recommend programs based on a user's background, and more."
+
+memory.chat_memory.add_messages(SystemMessage(content=context))
+
+
+print("=== Get All Programs ===")
+user_input = "List all programs available at the university."
+memory.chat_memory.add_messages(HumanMessage(content=user_input))
+response = agent_executor.invoke({"input": user_input})
+memory.chat_memory.add_messages(AIMessage(content=response["output"]))
+print("Bot: ", response["output"])
+
+print("\n=== Get Program Details ===")
+user_input = "I want details regarding the Artfcial Intlgc program"
+memory.chat_memory.add_messages(HumanMessage(content=user_input))
+response = agent_executor.invoke({"input": user_input})
+memory.chat_memory.add_messages(AIMessage(content=response["output"]))
+print("Bot: ", response["output"])
+
+print("\n=== Recommend Programs ===")
+user_input = "I have a Bachelor's in Business and want to advance in finance."
+memory.chat_memory.add_messages(HumanMessage(content=user_input))
+response = agent_executor.invoke({"input": user_input})
+memory.chat_memory.add_messages(AIMessage(content=response["output"]))
+print("Bot: ", response["output"])
