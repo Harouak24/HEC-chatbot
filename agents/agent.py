@@ -45,28 +45,47 @@ def generate_embedding(text: str) -> list:
         print(f"Error generating embedding: {e}")
         return []
 
-def get_all_programs_tool(query: str) -> str:
+def get_all_masters_tool(query: str) -> str:
     """
-    Returns a grouped list of all university programs.
+    Returns a grouped list of all university masters programs.
     """
     with open("data/programs.json", "r", encoding="utf-8") as f:
         programs = json.load(f)
-    grouped = {"Masters": [], "Executive Masters": [], "Executive Certificates": []}
+    masters = []
     for prog in programs:
         prog_type = prog.get("type")
-        title = prog.get("title", "Untitled Program")
+        title = prog.get("title")
         if prog_type == "masters":
-            grouped["Masters"].append(title)
-        elif prog_type == "executive_master":
-            grouped["Executive Masters"].append(title)
-        elif prog_type == "executive_certificate":
-            grouped["Executive Certificates"].append(title)
-    output = ""
-    for key, titles in grouped.items():
-        output += f"{key}:\n"
-        for i, t in enumerate(titles, start=1):
-            output += f"  {i}. {t}\n"
-        output += "\n"
+            masters.append(title)
+    output += f"HEC Masters:\n"
+    for i, m in enumerate(masters, start=1):
+        output += f"  {i}. {m}\n"
+    output += "\n"
+    return output.strip()
+
+def get_all_executive_masters_tool(query: str) -> str:
+    """
+    Returns a grouped list of all university executive masters programs.
+    """
+    with open("data/programs.json", "r", encoding="utf-8") as f:
+        programs = json.load(f)
+    grouped = []
+    for prog in programs:
+        prog_type = prog.get("type")
+        title = prog.get("title")
+        modules = prog.get("modules")
+        if prog_type == "executive_master":
+            grouped.append([title, modules])
+    output += f"HEC Executive Masters:\n"
+    i = 1
+    while i <= len(grouped):
+        title, modules = grouped[i-1]
+        output += f"  {i}. {title}\n"
+        if modules:
+            output += "    Certificates:\n"
+            for j, mod in enumerate(modules, start=1):
+                output += f"      {j}. {mod}\n"
+        i += 1
     return output.strip()
 
 def get_program_details_tool(query: str) -> str:
@@ -223,9 +242,14 @@ def recommend_tool(query: str) -> str:
 # Set up the tools for the agent.
 tools = [
     Tool(
-        name="GetAllPrograms",
-        func=get_all_programs_tool,
-        description="Returns a grouped list of all university programs."
+        name="GetAllMasters",
+        func=get_all_masters_tool,
+        description="Returns a grouped list of all university masters programs."
+    ),
+    Tool(
+        name="GetAllExecutiveMasters",
+        func=get_all_executive_masters_tool,
+        description="Returns a grouped list of all university executive masters programs."
     ),
     Tool(
         name="GetProgramDetails",
