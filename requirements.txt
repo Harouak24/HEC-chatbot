@@ -1,6 +1,3 @@
+langchain_core
+langchain_mongodb
 langchain
-langchain_community
-openai
-faiss-cpu
-unstructured
-streamlit
