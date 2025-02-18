@@ -257,7 +257,51 @@ def recommend_programs_tool(background: str = "", interest: str = "") -> str:
     }
     return json.dumps(result)
 
-tools = [get_all_executive_masters_tool, get_all_masters_tool, get_program_details_tool, recommend_programs_tool]
+@tool
+def rag_tool(query: str) -> str:
+    """
+    Retrieves relevant content from the cached HEC website data and returns structured data.
+    
+    The agent can then use or refine this output in its final response.
+    """
+    data_file = "data/hec_webpages.json"
+    embeddings_file = "data/hec_webpages_embeddings.pkl"
+    
+    if not os.path.exists(data_file) or not os.path.exists(embeddings_file):
+        return json.dumps({"error": "Cached website data or embeddings not found."})
+    
+    with open(data_file, "r", encoding="utf-8") as f:
+        docs = json.load(f)
+    with open(embeddings_file, "rb") as f:
+        embeddings_dict = pickle.load(f)
+    
+    query_emb = generate_embedding(query)
+    if not query_emb:
+        return json.dumps({"error": "Error generating embedding for your query."})
+    
+    # Compute cosine similarity for each document chunk.
+    similarities = []
+    for i, doc in enumerate(docs):
+        text = doc.get("page_content", "")
+        key = f"doc_{i}"
+        doc_emb = embeddings_dict.get(key)
+        if doc_emb:
+            sim = cosine_similarity(query_emb, doc_emb)
+            similarities.append((sim, text))
+    
+    # Sort chunks by similarity (highest first) and select the top 5.
+    similarities.sort(key=lambda x: x[0], reverse=True)
+    top_chunks = [text for sim, text in similarities[:5]]
+    concatenated_context = "\n\n".join(top_chunks)
+    
+    result = {
+        "retrieved_chunks": top_chunks,
+        "context": concatenated_context,
+        "num_chunks": len(top_chunks)
+    }
+    return json.dumps(result)
+
+tools = [get_all_executive_masters_tool, get_all_masters_tool, get_program_details_tool, recommend_programs_tool, rag_tool]
 
 agent = create_tool_calling_agent(llm, tools, prompt)
 
