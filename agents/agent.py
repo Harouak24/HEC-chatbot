@@ -50,22 +50,12 @@ def cosine_similarity(vec1: list, vec2: list) -> float:
 
 def generate_embedding(text: str) -> list:
     """
-    Generates an embedding vector for the given text using OpenAI's API.
-
-    Args:
-        text (str): The text to embed.
-
-    Returns:
-        list: A 1D list of floats representing the embedding vector.
-              Returns an empty list if there's an error.
+    Generates an embedding for the given text using the OpenAI Text Embedding API.
     """
     try:
-        response = OpenAIEmbeddings(
-            model="text-embedding-3-small",
-            input=text,
-            encoding_format="float"
-        )
-        return response.embed_query(text)
+        embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+        embedding = embeddings.embed_query(text)
+        return embedding
     except Exception as e:
         print(f"Error generating embedding: {e}")
         return []
@@ -149,7 +139,7 @@ def get_program_details_tool(query: str) -> str:
                 best_score = score
                 best_program = prog
                 
-    MIN_SIMILARITY_THRESHOLD = 0.5
+    MIN_SIMILARITY_THRESHOLD = 0.25
     if best_score < MIN_SIMILARITY_THRESHOLD or best_program is None:
         return "No close match found for your query."
     

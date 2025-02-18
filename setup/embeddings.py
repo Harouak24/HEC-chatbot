@@ -154,3 +154,4 @@ def precompute_website_embeddings(
 
 if __name__ == "__main__":
     precompute_program_embeddings()
+    precompute_website_embeddings()
