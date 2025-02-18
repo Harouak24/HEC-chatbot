@@ -1,32 +1,20 @@
 import os
 import json
 import pickle
-from openai import openai
 from dotenv import load_dotenv
+from langchain_openai import OpenAIEmbeddings
 
 load_dotenv()
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 def generate_embedding(text: str) -> list:
     """
-    Generates an embedding vector for the given text using OpenAI's API.
-
-    Args:
-        text (str): The text to embed.
-
-    Returns:
-        list: A 1D list of floats representing the embedding vector.
-              Returns an empty list if there's an error.
+    Generates an embedding for the given text using the OpenAI Text Embedding API.
     """
     try:
-        response = openai.embeddings.create(
-            model="text-embedding-3-small",  
-            input=text,
-            encoding_format="float"  
-        )
-        # 'response' is a typed object
-        embedding = response.data[0].embedding
+        embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+        embedding = embeddings.embed_query(text)
         return embedding
     except Exception as e:
         print(f"Error generating embedding: {e}")
@@ -36,12 +24,6 @@ def rich_text_to_plain_text(rich_text_node: dict) -> str:
     """
     Recursively converts Contentful Rich Text JSON into a plain-text string.
     Handles paragraphs, text nodes, lists, etc.
-
-    Args:
-        rich_text_node (dict): A node from the "json" part of the Contentful Rich Text.
-
-    Returns:
-        str: The plain-text extracted from the Rich Text node.
     """
     if not rich_text_node:
         return ""
@@ -133,6 +115,42 @@ def precompute_program_embeddings(
         pickle.dump(embeddings_dict, f)
 
     print(f"Embeddings saved to {output_file}")
+
+def precompute_website_embeddings(
+    data_file: str = "data/hec_webpages.json",
+    output_file: str = "data/hec_webpages_embeddings.pkl"
+):
+    """
+    Precomputes embeddings for each document chunk in hec_webpages.json
+    and saves them to a pickle file.
+
+    Each document is expected to be a dictionary with at least the key "page_content".
+    The resulting embeddings dictionary maps a unique document key (e.g., "doc_0")
+    to its embedding vector.
+    """
+    if not os.path.exists(data_file):
+        raise FileNotFoundError(
+            f"{data_file} does not exist. Please run your website caching script first."
+        )
+
+    # 1. Load the cached HEC website documents.
+    with open(data_file, "r", encoding="utf-8") as f:
+        docs = json.load(f)
+
+    embeddings_dict = {}
+    # 2. Generate an embedding for each document's page_content.
+    for i, doc in enumerate(docs):
+        text = doc.get("page_content", "")
+        key = f"doc_{i}"
+        embedding = generate_embedding(text)
+        embeddings_dict[key] = embedding
+
+    # 3. Save the embeddings dictionary to a pickle file.
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+    with open(output_file, "wb") as f:
+        pickle.dump(embeddings_dict, f)
+
+    print(f"Embeddings for HEC webpages saved to {output_file}")
 
 if __name__ == "__main__":
     precompute_program_embeddings()
