@@ -12,13 +12,29 @@ def cache_hec_webpages():
     urls = [
         "https://hec.ac.ma",
         "https://www.hec.ac.ma/executive-education",
-        "https://www.hec.ac.ma/grande-ecole"
+        "https://www.hec.ac.ma/grande-ecole",
+        "https://www.hec.ac.ma/grande-ecole/master-intelligence-artificielle-management",
+        "https://www.hec.ac.ma/grande-ecole/master-logistique-et-commerce-international",
+        "https://www.hec.ac.ma/grande-ecole/master-comptabilite-controle-et-audit",
+        "https://www.hec.ac.ma/grande-ecole/master-marketing-e-business-digital-strategy",
+        "https://www.hec.ac.ma/grande-ecole/master-finance",
+        "https://www.hec.ac.ma/executive-certificates",
+        "https://www.hec.ac.ma/executive-masters/executive-master-gestion-de-projets",
+        "https://www.hec.ac.ma/executive-masters/executive-master-finance",
+        "https://www.hec.ac.ma/executive-masters/executive-master-data-gouvernance-cloud-computing-cybersecurite",
+        "https://www.hec.ac.ma/executive-masters/executive-master-data-analytics-machine-learning",
+        "https://www.hec.ac.ma/executive-masters/executive-master-intelligence-artificielle-big-data",
+        "https://www.hec.ac.ma/executive-masters/executive-master-qualite-hygiene-securite-environnement-qhse",
+        "https://www.hec.ac.ma/executive-masters/executive-master-management-et-ressources-humaines",
+        "https://www.hec.ac.ma/executive-masters/executive-master-achats-logistique-et-supply-chain-management",
+        "https://www.hec.ac.ma/executive-masters/executive-master-audit-et-controle-de-gestion",
+        "https://www.hec.ac.ma/executive-masters/executive-master-marketing-digital-e-business"
     ]
     
     all_docs = []
     
     # Define a text splitter that splits by period.
-    splitter = CharacterTextSplitter(separator=".", chunk_size=1000, chunk_overlap=200)
+    splitter = CharacterTextSplitter(separator=".", chunk_size=1500, chunk_overlap=300)
     
     for url in urls:
         print(f"Loading content from: {url}")
