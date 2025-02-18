@@ -2,6 +2,7 @@ import os
 import json
 import pickle
 import numpy as np
+from pymongo import MongoClient
 from langchain_mongodb.chat_message_histories import MongoDBChatMessageHistory
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.tools import tool
@@ -14,11 +15,17 @@ load_dotenv()
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
+# MongoDB Connection
+client = MongoClient("mongodb://localhost:27017/")
+db = client["Bots"]
+collection = db["HEC"]
+
 llm = ChatOpenAI(model="gpt-4o", temperature=0.5)
 
 def get_session_history(session_id):
     return MongoDBChatMessageHistory(
         session_id=session_id,
+        connection_string="mongodb://localhost:27017/",
         database_name="Bots",
         collection_name="HEC",
     )
