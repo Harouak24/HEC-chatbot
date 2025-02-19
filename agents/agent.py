@@ -9,9 +9,15 @@ from langchain_core.tools import tool
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langsmith import traceable
+from langsmith.wrappers import wrap_openai
 from dotenv import load_dotenv
 
 load_dotenv()
+
+os.environ["LANGSMITH_TRACING"] = "true"
+
+LANGSMITH_API_KEY = os.getenv("LANGSMITH_API_KEY")
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 

@@ -1,3 +1,5 @@
 langchain_core
 langchain_mongodb
 langchain
+langsmith
+openai
