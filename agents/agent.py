@@ -9,13 +9,14 @@ from langchain_core.tools import tool
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+import openai
 from langsmith import traceable
 from langsmith.wrappers import wrap_openai
 from dotenv import load_dotenv
 
 load_dotenv()
 
-os.environ["LANGSMITH_TRACING"] = "true"
+os.environ["LANGSMITH_TRACING_V2"] = "true"
 
 LANGSMITH_API_KEY = os.getenv("LANGSMITH_API_KEY")
 
@@ -26,7 +27,9 @@ client = MongoClient("mongodb://localhost:27017/")
 db = client["Bots"]
 collection = db["HEC"]
 
+#llm = wrap_openai(ChatOpenAI(model="gpt-4o", temperature=0.5))
 llm = ChatOpenAI(model="gpt-4o", temperature=0.5)
+
 
 def get_session_history(session_id):
     return MongoDBChatMessageHistory(
@@ -74,6 +77,7 @@ def generate_embedding(text: str) -> list:
         return []
 
 @tool
+@traceable
 def get_all_masters_tool() -> str:
     """
     Returns a grouped list of all university masters programs.
@@ -93,6 +97,7 @@ def get_all_masters_tool() -> str:
     return output.strip()
 
 @tool
+@traceable
 def get_all_executive_masters_tool() -> str:
     """
     Returns a grouped list of all university executive masters programs.
@@ -119,6 +124,7 @@ def get_all_executive_masters_tool() -> str:
     return output.strip()
 
 @tool
+@traceable
 def get_program_details_tool(query: str) -> str:
     """
     Uses embedding matching to find the best program for a given query,
@@ -186,6 +192,7 @@ def get_program_details_tool(query: str) -> str:
     return details.strip()
 
 @tool
+@traceable
 def recommend_programs_tool(background: str = "", interest: str = "") -> str:
     """
     Provides program recommendations based on the user's background and interest.
@@ -264,6 +271,7 @@ def recommend_programs_tool(background: str = "", interest: str = "") -> str:
     return json.dumps(result)
 
 @tool
+@traceable
 def rag_tool(query: str) -> str:
     """
     Retrieves relevant content from the cached HEC website data and returns structured data.
