@@ -2,52 +2,27 @@ import os
 import json
 import pickle
 import numpy as np
-from pymongo import MongoClient
-from langchain_mongodb.chat_message_histories import MongoDBChatMessageHistory
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.tools import tool
-from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langsmith import traceable
-from langsmith.wrappers import wrap_openai
+import gradio as gr
 from dotenv import load_dotenv
 
 load_dotenv()
 
-os.environ["LANGSMITH_TRACING_V2"] = "true"
-
-LANGSMITH_API_KEY = os.getenv("LANGSMITH_API_KEY")
-
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
-# MongoDB Connection
-client = MongoClient("mongodb://localhost:27017/")
-db = client["Bots"]
-collection = db["HEC"]
 
 #llm = wrap_openai(ChatOpenAI(model="gpt-4o", temperature=0.5))
 llm = ChatOpenAI(model="gpt-4o", temperature=0.5)
 
-
-def get_session_history(session_id):
-    return MongoDBChatMessageHistory(
-        session_id=session_id,
-        connection_string="mongodb://localhost:27017/",
-        database_name="Bots",
-        collection_name="HEC",
-    )
-
 prompt_template = """
-    You are an academic advisor at HEC University. HEC University is a graduate school that offer masters programs as well as executive masters programs. You have access to a list of all programs available at the university. You can provide detailed information about a specific program, recommend programs based on a user's background and interest, and more.
+    You are an academic advisor at HEC University. HEC University is a graduate school that offers masters programs as well as executive masters programs. You have access to a list of all programs available at the university. You can provide detailed information about a specific program, recommend programs based on a user's background and interest, and more.
 """
 
 prompt = ChatPromptTemplate.from_messages(
     [
-        (
-            "system",
-            prompt_template,
-        ),
+        ("system", prompt_template),
         MessagesPlaceholder(variable_name="history"),
         MessagesPlaceholder(variable_name="agent_scratchpad"),
         ("human", "{input}"),
@@ -76,7 +51,6 @@ def generate_embedding(text: str) -> list:
         return []
 
 @tool
-@traceable
 def get_all_masters_tool() -> str:
     """
     Returns a grouped list of all university masters programs.
@@ -96,7 +70,6 @@ def get_all_masters_tool() -> str:
     return output.strip()
 
 @tool
-@traceable
 def get_all_executive_masters_tool() -> str:
     """
     Returns a grouped list of all university executive masters programs.
@@ -123,7 +96,6 @@ def get_all_executive_masters_tool() -> str:
     return output.strip()
 
 @tool
-@traceable
 def get_program_details_tool(query: str) -> str:
     """
     Uses embedding matching to find the best program for a given query,
@@ -191,7 +163,6 @@ def get_program_details_tool(query: str) -> str:
     return details.strip()
 
 @tool
-@traceable
 def recommend_programs_tool(background: str = "", interest: str = "") -> str:
     """
     Provides program recommendations based on the user's background and interest.
@@ -270,7 +241,6 @@ def recommend_programs_tool(background: str = "", interest: str = "") -> str:
     return json.dumps(result)
 
 @tool
-@traceable
 def rag_tool(query: str) -> str:
     """
     Retrieves relevant content from the cached HEC website data and returns structured data.
@@ -320,9 +290,24 @@ agent = create_tool_calling_agent(llm, tools, prompt)
 
 agent_executor = AgentExecutor(agent=agent, tools=tools)
 
-agent_executor_history = RunnableWithMessageHistory(
-    agent_executor,
-    get_session_history,
-    input_messages_key="input",
-    history_messages_key="history",
+def academic_advisor(query):
+    response = agent_executor.invoke({
+        "input": query,
+        "history": [],
+        "agent_scratchpad": []
+    })
+    return response.get("output", "No output available.")
+
+iface = gr.Interface(
+    fn=academic_advisor,
+    inputs=gr.Textbox(
+        label="Enter your question",
+        placeholder="Type your query here..."
+    ),
+    outputs=gr.Textbox(label="Advisor Response"),
+    title="HEC University Academic Advisor",
+    description="Ask questions about HEC University masters and executive masters programs."
 )
+
+if __name__ == "__main__":
+    iface.launch()
