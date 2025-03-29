@@ -12,12 +12,6 @@ def cache_hec_webpages():
     urls = [
         "https://hec.ac.ma",
         "https://www.hec.ac.ma/executive-education",
-        "https://www.hec.ac.ma/grande-ecole",
-        "https://www.hec.ac.ma/grande-ecole/master-intelligence-artificielle-management",
-        "https://www.hec.ac.ma/grande-ecole/master-logistique-et-commerce-international",
-        "https://www.hec.ac.ma/grande-ecole/master-comptabilite-controle-et-audit",
-        "https://www.hec.ac.ma/grande-ecole/master-marketing-e-business-digital-strategy",
-        "https://www.hec.ac.ma/grande-ecole/master-finance",
         "https://www.hec.ac.ma/executive-certificates",
         "https://www.hec.ac.ma/executive-masters/executive-master-gestion-de-projets",
         "https://www.hec.ac.ma/executive-masters/executive-master-finance",
@@ -28,7 +22,13 @@ def cache_hec_webpages():
         "https://www.hec.ac.ma/executive-masters/executive-master-management-et-ressources-humaines",
         "https://www.hec.ac.ma/executive-masters/executive-master-achats-logistique-et-supply-chain-management",
         "https://www.hec.ac.ma/executive-masters/executive-master-audit-et-controle-de-gestion",
-        "https://www.hec.ac.ma/executive-masters/executive-master-marketing-digital-e-business"
+        "https://www.hec.ac.ma/executive-masters/executive-master-marketing-digital-e-business",
+        "https://www.hec.ac.ma/programme-grande-ecole",
+        "https://www.hec.ac.ma/programme-grande-ecole/intelligence-artificielle-management",
+        "https://www.hec.ac.ma/programme-grande-ecole/logistique-et-commerce-international",
+        "https://www.hec.ac.ma/programme-grande-ecole/comptabilite-controle-et-audit",
+        "https://www.hec.ac.ma/programme-grande-ecole/marketing-e-business-digital-strategy",
+        "https://www.hec.ac.ma/programme-grande-ecole/finance"
     ]
     
     all_docs = []

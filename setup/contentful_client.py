@@ -144,3 +144,58 @@ def get_executive_certificates(title_filter: str = "") -> list:
     exec_certs_collection = data.get("hecPgeExecutiveCertificatesCollection", {})
     items = exec_certs_collection.get("items", [])
     return items
+
+
+def get_executive_bachelors() -> list:
+    """
+    Fetches all Executive Bachelor's programs from Contentful.
+
+    Returns:
+        list: A list of dictionaries representing Executive Bachelor's programs. Each item
+              contains fields like 'title', 'slug', 'description', 'studyFee', 'applicationFee',
+              and 'registrationFee'.
+    """
+    query = """
+    query {
+      hecPgeExecutiveBachelorsCollection {
+        items {
+          title
+          slug
+          description
+          studyFee
+          applicationFee
+          registrationFee
+        }
+      }
+    }
+    """
+    response_data = query_contentful(query)
+    data = response_data.get("data", {})
+    exec_bachelors_collection = data.get("hecPgeExecutiveBachelorsCollection", {})
+    items = exec_bachelors_collection.get("items", [])
+    return items
+
+
+def get_master_certificates() -> list:
+    """
+    Fetches all Master Certificates from Contentful.
+
+    Returns:
+        list: A list of dictionaries representing Master Certificates. Each item
+              contains fields like 'title', 'slug', 'description', 'studyFee',
+              'applicationFee', 'registrationFee', and 'duration'.
+    """
+    query = """
+    query {
+      hecPgeMasterCertificatesCollection {
+        items {
+          title
+        }
+      }
+    }
+    """
+    response_data = query_contentful(query)
+    data = response_data.get("data", {})
+    master_certs_collection = data.get("hecPgeMasterCertificatesCollection", {})
+    items = master_certs_collection.get("items", [])
+    return items

@@ -2,32 +2,17 @@ import os
 import json
 import pickle
 import numpy as np
-from langchain.agents import AgentExecutor, create_tool_calling_agent
-from langchain_core.tools import tool
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from agents import Agent, Runner, function_tool
+from langchain_openai import OpenAIEmbeddings
 import gradio as gr
 from dotenv import load_dotenv
+import asyncio
 
 load_dotenv()
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
-#llm = wrap_openai(ChatOpenAI(model="gpt-4o", temperature=0.5))
-llm = ChatOpenAI(model="gpt-4o", temperature=0.5)
-
-prompt_template = """
-    You are an academic advisor at HEC University. HEC University is a graduate school that offers masters programs as well as executive masters programs. You have access to a list of all programs available at the university. You can provide detailed information about a specific program, recommend programs based on a user's background and interest, and more.
-"""
-
-prompt = ChatPromptTemplate.from_messages(
-    [
-        ("system", prompt_template),
-        MessagesPlaceholder(variable_name="history"),
-        MessagesPlaceholder(variable_name="agent_scratchpad"),
-        ("human", "{input}"),
-    ]
-)
+# Ensure OpenAI API key is set
+if not os.getenv("OPENAI_API_KEY"):
+    raise ValueError("Please set the OPENAI_API_KEY environment variable")
 
 def cosine_similarity(vec1: list, vec2: list) -> float:
     a = np.array(vec1)
@@ -50,8 +35,8 @@ def generate_embedding(text: str) -> list:
         print(f"Error generating embedding: {e}")
         return []
 
-@tool
-def get_all_masters_tool() -> str:
+@function_tool
+def get_all_masters() -> str:
     """
     Returns a grouped list of all university masters programs.
     """
@@ -69,8 +54,8 @@ def get_all_masters_tool() -> str:
     output += "\n"
     return output.strip()
 
-@tool
-def get_all_executive_masters_tool() -> str:
+@function_tool
+def get_all_executive_masters() -> str:
     """
     Returns a grouped list of all university executive masters programs.
     """
@@ -95,8 +80,8 @@ def get_all_executive_masters_tool() -> str:
         i += 1
     return output.strip()
 
-@tool
-def get_all_executive_bachelors_tool() -> str:
+@function_tool
+def get_all_executive_bachelors() -> str:
     """
     Returns a grouped list of all university executive bachelor programs.
     """
@@ -111,8 +96,8 @@ def get_all_executive_bachelors_tool() -> str:
         output += f"  {i}. {title}\n"
     return output.strip()
 
-@tool
-def get_all_master_certificates_tool() -> str:
+@function_tool
+def get_all_master_certificates() -> str:
     """
     Returns a grouped list of all master certificate programs.
     """
@@ -127,8 +112,8 @@ def get_all_master_certificates_tool() -> str:
         output += f"  {i}. {title}\n"
     return output.strip()
 
-@tool
-def get_program_details_tool(query: str) -> str:
+@function_tool
+def get_program_details(query: str) -> str:
     """
     Uses embedding matching to find the best program for a given query,
     then returns its detailed information.
@@ -194,16 +179,17 @@ def get_program_details_tool(query: str) -> str:
     
     return details.strip()
 
-@tool
-def recommend_programs_tool(background: str = "", interest: str = "") -> str:
+@function_tool
+def recommend_programs(background: str, interest: str) -> str:
     """
     Provides program recommendations based on the user's background and interest.
-    
-    This tool returns structured data (as a JSON string) that includes:
-      - "category": either "masters", "executive_master", "executive_bachelor", 
-                    "executive_certificate", or "master_certificate"
-      - "recommended_programs": a list of recommended program titles (up to three)
     """
+    # Handle empty strings as if no input was provided
+    if not background:
+        background = ""
+    if not interest:
+        interest = ""
+        
     combined_query = (background + " " + interest).strip()
     data_file = "data/programs.json"
     embeddings_file = "data/program_embeddings.pkl"
@@ -216,7 +202,6 @@ def recommend_programs_tool(background: str = "", interest: str = "") -> str:
     with open(embeddings_file, "rb") as f:
         embeddings = pickle.load(f)
     
-    # If no input is provided, default to master's category.
     if not combined_query:
         category = "masters"
         bg_embedding = None
@@ -225,11 +210,8 @@ def recommend_programs_tool(background: str = "", interest: str = "") -> str:
         if not bg_embedding:
             return json.dumps({"error": "Error generating embedding for your input."})
         
-        # Separate programs into broader categories.
-        # For recommendations, we group traditional masters and master certificates together,
-        # and executive masters, executive bachelors, and executive certificates together.
-        masters = [p for p in programs if p.get("type") in ("masters", "master_certificate")]
-        exec_programs = [p for p in programs if p.get("type") in ("executive_master", "executive_bachelor", "executive_certificate")]
+        masters = [p for p in programs if p.get("type") == "masters"]
+        exec_masters = [p for p in programs if p.get("type") == "executive_master"]
         
         def avg_similarity(progs):
             scores = []
@@ -241,28 +223,20 @@ def recommend_programs_tool(background: str = "", interest: str = "") -> str:
             return sum(scores) / len(scores) if scores else 0
         
         masters_score = avg_similarity(masters)
-        exec_score = avg_similarity(exec_programs)
+        exec_score = avg_similarity(exec_masters)
         
-        # If both similarity scores are low, advise the user accordingly.
         if masters_score < 0.3 and exec_score < 0.3:
             return json.dumps({
                 "error": ("Your background and interests do not strongly align with our graduate programs. "
                           "Please consider obtaining a bachelor's degree first.")
             })
         
-        # Select the category with the higher average similarity.
         category = "masters" if masters_score >= exec_score else "executive_master"
     
-    # Filter programs by the selected category.
-    if category == "masters":
-        filtered = [p for p in programs if p.get("type") in ("masters", "master_certificate")]
-    else:
-        filtered = [p for p in programs if p.get("type") in ("executive_master", "executive_bachelor", "executive_certificate")]
-    
+    filtered = [p for p in programs if p.get("type") == category]
     if not filtered:
         return json.dumps({"error": f"Sorry, no programs found in the '{category}' category."})
     
-    # Rank the filtered programs by cosine similarity if an embedding was generated.
     if bg_embedding:
         ranked = sorted(
             filtered,
@@ -279,12 +253,10 @@ def recommend_programs_tool(background: str = "", interest: str = "") -> str:
     }
     return json.dumps(result)
 
-@tool
-def rag_tool(query: str) -> str:
+@function_tool
+def rag_search(query: str) -> str:
     """
-    Retrieves relevant content from the cached HEC website data and returns structured data.
-    
-    The agent can then use or refine this output in its final response.
+    Retrieves relevant content from the cached HEC website data.
     """
     data_file = "data/hec_webpages.json"
     embeddings_file = "data/hec_webpages_embeddings.pkl"
@@ -301,7 +273,6 @@ def rag_tool(query: str) -> str:
     if not query_emb:
         return json.dumps({"error": "Error generating embedding for your query."})
     
-    # Compute cosine similarity for each document chunk.
     similarities = []
     for i, doc in enumerate(docs):
         text = doc.get("page_content", "")
@@ -311,7 +282,6 @@ def rag_tool(query: str) -> str:
             sim = cosine_similarity(query_emb, doc_emb)
             similarities.append((sim, text))
     
-    # Sort chunks by similarity (highest first) and select the top 5.
     similarities.sort(key=lambda x: x[0], reverse=True)
     top_chunks = [text for sim, text in similarities[:5]]
     concatenated_context = "\n\n".join(top_chunks)
@@ -323,30 +293,46 @@ def rag_tool(query: str) -> str:
     }
     return json.dumps(result)
 
-tools = [get_all_executive_masters_tool, get_all_masters_tool, get_program_details_tool, recommend_programs_tool, rag_tool]
+# Create the academic advisor agent
+academic_advisor = Agent(
+    name="HEC Academic Advisor",
+    instructions="""You are an academic advisor for HEC Rabat. HEC University is a graduate school that offers masters programs as well as executive masters programs. 
+    You have access to a list of all programs available at the university. You can provide detailed information about a specific program, recommend programs based on a user's background and interest, and more. 
+    Note: All responses should be strictly related to HEC Rabat. Please do not reference or confuse HEC Rabat with HEC Paris or any other HEC institutions.
+    
+    You have access to the following tools:
+    - get_all_masters(): Lists all master's programs
+    - get_all_executive_masters(): Lists all executive master's programs
+    - get_program_details(query): Gets detailed information about a specific program
+    - get_all_executive_bachelors(): Lists all executive bachelor programs
+    - get_all_master_certificates(): Lists all master certificate programs
+    - recommend_programs(background, interest): Recommends programs based on background and interests
+    - rag_search(query): Searches the HEC website for relevant information
+    
+    Use these tools to provide accurate and helpful information to students.""",
+    tools=[get_all_masters, get_all_executive_masters, get_all_executive_bachelors, get_all_master_certificates, get_program_details, recommend_programs, rag_search],
+    model="gpt-4o-mini"
+)
 
-agent = create_tool_calling_agent(llm, tools, prompt)
+async def process_query(query: str) -> str:
+    """
+    Process a user query using the academic advisor agent asynchronously.
+    """
+    result = await Runner.run(academic_advisor, query)
+    return result.final_output
 
-agent_executor = AgentExecutor(agent=agent, tools=tools)
-
-def academic_advisor(query):
-    response = agent_executor.invoke({
-        "input": query,
-        "history": [],
-        "agent_scratchpad": []
-    })
-    return response.get("output", "No output available.")
-
+# Create the Gradio interface
 iface = gr.Interface(
-    fn=academic_advisor,
+    fn=process_query,
     inputs=gr.Textbox(
         label="Enter your question",
         placeholder="Type your query here..."
     ),
-    outputs=gr.Textbox(label="Advisor Response"),
+    outputs=gr.Markdown(label="Advisor Response"),
     title="HEC University Academic Advisor",
-    description="Ask questions about HEC University masters and executive masters programs."
+    description="Ask questions about HEC University masters and executive masters programs.",
+    allow_flagging=False
 )
 
-if __name__ == "__main__":
-    iface.launch()
+if __name__ == "_main_":
+    iface.queue().launch()
